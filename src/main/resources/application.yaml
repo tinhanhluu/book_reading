@@ -1,0 +1,21 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /ritbut
+
+spring:
+  application:
+    name: "book_reading"
+  datasource:
+    url: "jdbc:mysql://localhost:3308/identity_services"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  signerKey: "I+8F9Qq3Hw2cYXZlhE5rQpiodpHGTxoOnSgwQxMZFkybJStDcJSi0vOnlVBZnAF5"
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in second

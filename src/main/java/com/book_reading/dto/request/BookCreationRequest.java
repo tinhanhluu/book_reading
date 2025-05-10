@@ -13,9 +13,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
+public class BookCreationRequest {
+    String title;
+    String description;
+    LocalDate releaseDate;
 
-    String name;
-    String password;
-    LocalDate birthday;
+    String author;
+    String genre;
 }

@@ -4,8 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
-
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,9 +11,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
-
+public class GenreRequest {
     String name;
-    String password;
-    LocalDate birthday;
 }

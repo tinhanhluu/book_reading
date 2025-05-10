@@ -13,9 +13,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
-
+public class UserUpdateRequest {
     String name;
-    String password;
+    String avatarUrl;
     LocalDate birthday;
 }

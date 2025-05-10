@@ -1,6 +1,7 @@
 package com.book_reading.service;
 
 import com.book_reading.dto.request.UserCreationRequest;
+import com.book_reading.dto.request.UserUpdateRequest;
 import com.book_reading.dto.response.UserResponse;
 import com.book_reading.entity.User;
 import com.book_reading.enums.Roles;
@@ -11,6 +12,7 @@ import com.book_reading.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,5 +41,21 @@ public class UserService {
                 .createdAt(new Date())
                 .build();
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    public UserResponse getInfo(){
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        var user = userRepository.findByName(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    public void updateInfo(UserUpdateRequest request){
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        var user = userRepository.findByName(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
+
+        userMapper.updateUser(request, user);
     }
 }

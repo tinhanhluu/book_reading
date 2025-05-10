@@ -6,16 +6,17 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
-
-    String name;
-    String password;
-    LocalDate birthday;
+public class BookUpdateRequest {
+    String title;
+    String author;
+    String genre;
+    String description;
+    LocalDate releaseDate;
 }

@@ -1,26 +1,31 @@
 package com.book_reading.service;
 
 import com.book_reading.dto.request.AuthenticationRequest;
+import com.book_reading.dto.request.IntrospectRequest;
 import com.book_reading.dto.response.AuthenticationResponse;
+import com.book_reading.dto.response.IntrospectResponse;
+import com.book_reading.entity.InvalidToken;
 import com.book_reading.entity.User;
 import com.book_reading.exception.AppException;
 import com.book_reading.exception.ErrorCode;
+import com.book_reading.repository.InvalidTokenRepository;
 import com.book_reading.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -33,6 +38,7 @@ import java.util.UUID;
 public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    InvalidTokenRepository invalidTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -53,7 +59,7 @@ public class AuthenticationService {
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
         if(!authenticated) {
-            throw new BadCredentialsException("your password is incorrect");
+            throw new AppException(ErrorCode.WRONG_CREDENTIALS);
         }
 
         return AuthenticationResponse.builder()
@@ -86,4 +92,54 @@ public class AuthenticationService {
         }
     }
 
+    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier(signerKey);
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiryTime = (isRefresh)
+                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(REFRESH_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                : signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verify = signedJWT.verify(verifier);
+
+        if(!(verify && expiryTime.after(new Date()))) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        return signedJWT;
+    }
+
+    public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
+        var token = request.getToken();
+        boolean isValid = true;
+
+        try {
+            verifyToken(token, false);
+        } catch (ParseException e) {
+            isValid = false;
+        }
+
+        return IntrospectResponse.builder()
+                .valid(isValid)
+                .build();
+    }
+
+    public void logout(IntrospectRequest request) throws ParseException, JOSEException {
+        try {
+            SignedJWT signedJWT = verifyToken(request.getToken(), true);
+            var jti = signedJWT.getJWTClaimsSet().getJWTID();
+            var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            InvalidToken invalidToken = InvalidToken.builder()
+                    .expiryTime(expiryTime)
+                    .tokenId(jti)
+                    .build();
+
+            invalidTokenRepository.save(invalidToken);
+
+        } catch (AppException e) {
+            log.info("Token is expired");
+        }
+    }
 }

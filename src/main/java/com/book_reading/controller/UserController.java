@@ -8,9 +8,10 @@ import com.book_reading.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -28,7 +29,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping()
+    @GetMapping("/info")
     public ApiResponse<UserResponse> getInfo(){
         return ApiResponse.<UserResponse>builder()
                 .message("Get info successful")
@@ -36,8 +37,19 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping
+    public ApiResponse<List<UserResponse>> getAllUsers(){
+        return ApiResponse.<List<UserResponse>>builder()
+                .message("Get all users successful")
+                .data(userService.getAllUsers())
+                .build();
+    }
+
     @PatchMapping("/update")
-    public ResponseEntity<String> updateInfo(@RequestBody UserUpdateRequest request){
-        return ResponseEntity.ok("Update successful");
+    public ApiResponse<UserResponse> updateInfo(@RequestBody UserUpdateRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .message("Update user successful")
+                .data(userService.updateInfo(request))
+                .build();
     }
 }

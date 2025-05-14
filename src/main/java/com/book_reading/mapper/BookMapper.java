@@ -8,12 +8,13 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {AuthorMapperHelper.class, GenreMapperHelper.class})
 public interface BookMapper {
-    Book toBook(BookCreationRequest request);
     BookResponse toBookResponse(Book book);
     List<BookResponse> toListBookResponse(List<Book> book);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "author", target = "author")
+    @Mapping(source = "genre", target = "genre")
     void toUpdateBook(BookUpdateRequest request,@MappingTarget Book book);
 }

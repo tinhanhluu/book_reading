@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,10 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    public List<UserResponse> getAllUsers(){
+        return userMapper.toAllUsersResponse(userRepository.findAll());
+    }
+
     public UserResponse getInfo(){
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByName(username)
@@ -51,11 +56,13 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public void updateInfo(UserUpdateRequest request){
+    public UserResponse updateInfo(UserUpdateRequest request){
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findByName(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
 
         userMapper.updateUser(request, user);
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 }

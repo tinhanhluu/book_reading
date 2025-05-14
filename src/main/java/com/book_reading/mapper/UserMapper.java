@@ -9,10 +9,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     User toUser(UserCreationRequest request);
     UserResponse toUserResponse(User user);
+
+    List<UserResponse> toAllUsersResponse(List<User> user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUser(UserUpdateRequest request, @MappingTarget User user);

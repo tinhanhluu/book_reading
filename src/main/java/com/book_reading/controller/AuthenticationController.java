@@ -4,6 +4,7 @@ import com.book_reading.dto.request.AuthenticationRequest;
 import com.book_reading.dto.request.IntrospectRequest;
 import com.book_reading.dto.response.ApiResponse;
 import com.book_reading.dto.response.AuthenticationResponse;
+import com.book_reading.dto.response.IntrospectResponse;
 import com.book_reading.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -33,10 +34,18 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/introspect")
+    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
+        return ApiResponse.<IntrospectResponse>builder()
+                .data(authenticationService.introspect(request))
+                .build();
+    }
+
     @PostMapping("/logout")
-    public ApiResponse<?> logout(IntrospectRequest request) throws ParseException, JOSEException {
+    public ApiResponse<?> logout(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
         return ApiResponse.builder()
+                .message("You logout successfully")
                 .build();
     }
 }

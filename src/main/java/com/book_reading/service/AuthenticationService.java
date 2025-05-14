@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ import java.util.UUID;
 @Slf4j
 public class AuthenticationService {
     UserRepository userRepository;
-    PasswordEncoder passwordEncoder;
+
     InvalidTokenRepository invalidTokenRepository;
 
     @NonFinal
@@ -51,6 +52,9 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refreshable-duration}")
     protected long REFRESH_DURATION;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository.findByName(request.getName())
@@ -104,6 +108,10 @@ public class AuthenticationService {
         var verify = signedJWT.verify(verifier);
 
         if(!(verify && expiryTime.after(new Date()))) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        if(invalidTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 

@@ -8,9 +8,9 @@ spring:
   application:
     name: "book_reading"
   datasource:
-    url: "jdbc:mysql://localhost:3308/book_reading"
+    url: "jdbc:mysql://root:OoGvdFJpgsgyKgqVkwjUEsXfWNzGinEJ@switchback.proxy.rlwy.net:38005/railway"
     username: root
-    password: root
+    password: OoGvdFJpgsgyKgqVkwjUEsXfWNzGinEJ
   jpa:
     hibernate:
       ddl-auto: update

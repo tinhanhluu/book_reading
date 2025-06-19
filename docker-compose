@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: book_reading
+    networks:
+      - book-reading-network
+
+  book-reading:
+    image: book_reading:0.0.1
+    container_name: book-reading
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/book_reading
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - book-reading-network
+    depends_on:
+      - mysql
+
+networks:
+  book-reading-network:
+    driver: bridge

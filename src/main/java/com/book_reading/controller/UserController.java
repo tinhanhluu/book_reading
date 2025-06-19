@@ -24,6 +24,7 @@ public class UserController {
     @PostMapping("/register")
     public ApiResponse<UserResponse> userRegistration(@RequestBody UserCreationRequest request){
         return ApiResponse.<UserResponse>builder()
+                .code(200)
                 .message("User registration successful")
                 .data(userService.registerUser(request))
                 .build();
@@ -45,7 +46,7 @@ public class UserController {
                 .build();
     }
 
-    @PatchMapping("/update")
+    @PutMapping("/update")
     public ApiResponse<UserResponse> updateInfo(@RequestBody UserUpdateRequest request){
         return ApiResponse.<UserResponse>builder()
                 .message("Update user successful")

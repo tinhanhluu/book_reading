@@ -17,5 +17,5 @@ public class UserCreationRequest {
 
     String name;
     String password;
-    LocalDate birthday;
+    String email;
 }

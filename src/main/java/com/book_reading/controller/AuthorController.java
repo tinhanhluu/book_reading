@@ -21,9 +21,10 @@ public class AuthorController {
     AuthorService authorService;
 
     @PostMapping
-    public ApiResponse<AuthorCreationResponse> createAuthor(AuthorCreationRequest request) {
+    public ApiResponse<AuthorCreationResponse> createAuthor(@RequestBody AuthorCreationRequest request) {
         return ApiResponse.<AuthorCreationResponse>builder()
                 .data(authorService.createAuthor(request))
+                .message("Create Author Successfully")
                 .build();
     }
 

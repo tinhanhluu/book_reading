@@ -19,7 +19,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final static String[] publicUrls = {"/user/register", "/auth/login", "/auth/logout", "/auth/introspect"};
+    private final static String[] publicUrls = {
+            "/user/register",
+            "/auth/login",
+            "/auth/google",
+            "/auth/logout",
+            "/auth/introspect",
+            "/genre",
+            "/book/hot",
+            "/book/vip",
+            "/book/genre/*",
+            "/book/hot/*"
+    };
 
     @Autowired
     private JwtDecoder jwtDecoder;
@@ -27,7 +38,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, publicUrls).permitAll()
+                request.requestMatchers(publicUrls).permitAll()
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 ->

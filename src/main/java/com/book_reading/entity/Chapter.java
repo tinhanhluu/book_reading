@@ -23,6 +23,7 @@ public class Chapter {
     Book book;
 
     String title;
+    @Column(name = "content", columnDefinition = "MEDIUMTEXT")
     String content;
     int chapterNumber;
     LocalDate createdAt;

@@ -1,17 +1,19 @@
 package com.book_reading.dto.response;
 
+import com.book_reading.entity.Author;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    String token;
-    Boolean success;
-    String name;
-    String avatarUrl;
-    boolean isVip;
+public class BookHotResponse {
+    String id;
+    String title;
+    Author author;
+    String coverUrl;
+
 }

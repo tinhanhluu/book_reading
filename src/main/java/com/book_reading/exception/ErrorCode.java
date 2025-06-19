@@ -15,7 +15,8 @@ public enum ErrorCode {
     USER_EXISTED(409, "User you search existed", HttpStatus.CONFLICT),
     UNDEMANDING_USER(400, "User not match requirements", HttpStatus.BAD_REQUEST),
     AUTHOR_NOT_FOUND(404, "Author not found", HttpStatus.NOT_FOUND),
-    NOT_FOUND(404, "Not found", HttpStatus.NOT_FOUND)
+    NOT_FOUND(404, "Not found", HttpStatus.NOT_FOUND),
+    EXISTED(409, "Existed data", HttpStatus.CONFLICT)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {

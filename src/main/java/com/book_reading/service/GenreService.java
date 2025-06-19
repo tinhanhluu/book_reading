@@ -25,11 +25,17 @@ public class GenreService {
     GenreMapper genreMapper;
 
     public GenreResponse createGenre(GenreRequest request){
-        Genre genre = Genre.builder()
+        var genre = genreRepository.findByName(request.getName()).orElse(null);
+
+        if(genre != null && genreRepository.existsById(genre.getId())){
+            throw new AppException(ErrorCode.EXISTED);
+        }
+
+        Genre genre1 = Genre.builder()
                 .name(request.getName())
                 .build();
 
-        return genreMapper.toGenreResponse(genreRepository.save(genre));
+        return genreMapper.toGenreResponse(genreRepository.save(genre1));
     }
 
     public GenreResponse getGenre(String genreId){

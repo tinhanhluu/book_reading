@@ -28,6 +28,7 @@ public class Book {
     Genre genre;
 
     String title;
+    @Column(name = "description", columnDefinition = "MEDIUMTEXT")
     String description;
     LocalDate releaseDate;
     String coverUrl;

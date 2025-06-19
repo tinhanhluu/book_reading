@@ -37,7 +37,7 @@ public class UserService {
         User user = User.builder()
                 .name(request.getName())
                 .password(userPassword)
-                .birthday(request.getBirthday())
+                .email(request.getEmail())
                 .role(Roles.ROLE_USER)
                 .createdAt(new Date())
                 .build();

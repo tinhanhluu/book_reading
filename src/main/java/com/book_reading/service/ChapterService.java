@@ -2,6 +2,7 @@ package com.book_reading.service;
 
 import com.book_reading.dto.request.ChapterCreationRequest;
 import com.book_reading.dto.response.ChapterResponse;
+import com.book_reading.entity.Book;
 import com.book_reading.entity.Chapter;
 import com.book_reading.exception.AppException;
 import com.book_reading.exception.ErrorCode;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ import java.time.LocalDate;
 public class ChapterService {
     ChapterRepository chapterRepository;
     BookRepository bookRepository;
-    private final ChapterMapper chapterMapper;
+    ChapterMapper chapterMapper;
 
     public ChapterResponse createChapter(ChapterCreationRequest request) {
         var book = bookRepository.findById(request.getBookId())
@@ -39,6 +41,21 @@ public class ChapterService {
         return chapterMapper.toChapterResponse(chapterRepository.save(chapter));
     }
 
+    public List<ChapterResponse> getAllChapters(String bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
 
+        return chapterMapper.toAllChapterResponses(chapterRepository.findAllByBook(book));
+    }
+
+    public ChapterResponse getChapter(String bookId, int chapterNumber) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        Chapter chapter = chapterRepository.findByBookAndChapterNumber(book, chapterNumber)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        return  chapterMapper.toChapterResponse(chapter);
+    }
 
 }

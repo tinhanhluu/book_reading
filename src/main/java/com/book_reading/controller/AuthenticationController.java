@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +30,16 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> loginProcess(@RequestBody AuthenticationRequest request){
         return ApiResponse.<AuthenticationResponse>builder()
+                .code(200)
                 .message("You login successfully")
                 .data(authenticationService.authenticate(request))
                 .build();
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> loginWithGoogle(@RequestBody IntrospectRequest request) {
+        AuthenticationResponse response = authenticationService.authenticateWithGoogle(request.getToken());
+        return ResponseEntity.ok(new ApiResponse<>(200, "Login with Google successful", response));
     }
 
     @PostMapping("/introspect")

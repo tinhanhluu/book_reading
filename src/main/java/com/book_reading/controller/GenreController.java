@@ -24,9 +24,10 @@ public class GenreController {
     GenreService genreService;
 
     @PostMapping
-    public ApiResponse<GenreResponse> createGenre(GenreRequest request) {
+    public ApiResponse<GenreResponse> createGenre(@RequestBody GenreRequest request) {
         return ApiResponse.<GenreResponse>builder()
                 .data(genreService.createGenre(request))
+                .message("create genre success")
                 .build();
     }
 
